@@ -1,0 +1,68 @@
+# --- C / kernel build artifacts ---
+*.o
+*.o.*
+*.ko
+*.ko.*
+*.mod
+*.mod.c
+*.mod.o
+.*.cmd
+modules.order
+Module.symvers
+*.symvers
+.tmp_versions/
+*.dwo
+*.d
+
+# --- daemon binaries ---
+daemon/build/
+daemon/hmb-trace-daemon
+daemon/*.a
+
+# --- Python / analyzer ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.uv/
+uv.lock
+.uv-cache/
+dist/
+build/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.tox/
+
+# --- mock environment (disposable disk images, guest kernel builds) ---
+mock/build/
+mock/work/
+mock/images/
+mock/linux/
+*.qcow2
+*.img
+
+# --- local trace data ---
+dumps/
+traces/
+*.bin
+!docs/test-vectors/*.bin
+
+# --- editor / OS ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# --- generated docs / Jekyll ---
+docs/_build/
+docs/_site/
+docs/.jekyll-cache/
+docs/.bundle/
+docs/vendor/
+docs/Gemfile.lock
+_site/

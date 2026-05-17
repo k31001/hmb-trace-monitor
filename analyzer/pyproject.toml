@@ -1,0 +1,65 @@
+[project]
+name = "hmb-trace"
+version = "0.0.1"
+description = "Offline decoder and analysis CLI for NVMe HMB firmware traces."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [{ name = "hmb-trace-monitor authors" }]
+keywords = ["nvme", "hmb", "tracing", "ssd", "firmware"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Hardware",
+]
+dependencies = []
+
+[project.scripts]
+hmb-trace-analyze = "hmb_trace.cli:main"
+
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hmb_trace"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "pytest>=8.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "W",   # pycodestyle / pyflakes
+    "I",             # isort
+    "B",             # bugbear
+    "UP",            # pyupgrade
+    "SIM",           # simplify
+    "RUF",           # ruff-specific
+    "ANN",           # flake8-annotations (type hints)
+]
+ignore = [
+    "ANN101",  # missing type for self
+    "ANN102",  # missing type for cls
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ANN"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unreachable = true
+warn_redundant_casts = true
+disallow_any_unimported = true
+files = ["src", "tests"]

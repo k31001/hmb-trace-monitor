@@ -1,0 +1,45 @@
+# SPDX-License-Identifier: Apache-2.0
+# GitHub Pages용 Jekyll 설정. /docs 디렉토리를 사이트 루트로 사용한다.
+
+title: hmb-trace-monitor
+description: NVMe SSD HMB(Host Memory Buffer)를 활용한 펌웨어 트레이스 파이프라인
+lang: ko
+url: ""
+
+remote_theme: just-the-docs/just-the-docs
+
+# 색상/검색 등 just-the-docs 옵션
+color_scheme: light
+search_enabled: true
+search:
+  heading_level: 3
+  previews: 2
+  preview_words_before: 3
+  preview_words_after: 3
+
+# 사이드바 상단 푸터/외부 링크
+aux_links:
+  "GitHub 저장소":
+    - "https://github.com/k31001/hmb-trace-monitor"
+
+# Footer
+footer_content: "GPL-2.0 (kernel/, daemon/) · Apache-2.0 (analyzer/, docs/, mock/)"
+
+# 사이트에 포함하지 않을 파일
+exclude:
+  - CLAUDE.md            # AI 에이전트용 메타 문서
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - .jekyll-cache
+  - "*.bak"
+
+# Markdown 처리
+markdown: kramdown
+kramdown:
+  syntax_highlighter: rouge
+  input: GFM
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-seo-tag

@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: Apache-2.0
+# 로컬에서 사이트를 미리 보고 싶을 때만 사용. GitHub Pages는 별도 Gemfile 없이
+# remote_theme + github-pages gem 기반으로 빌드한다.
+#
+#   bundle install
+#   bundle exec jekyll serve
+
+source "https://rubygems.org"
+
+gem "github-pages", group: :jekyll_plugins
+gem "jekyll-remote-theme"
+gem "jekyll-seo-tag"
+gem "webrick"

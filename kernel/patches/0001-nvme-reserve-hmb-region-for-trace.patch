@@ -1,0 +1,17 @@
+From: hmb-trace-monitor authors <noreply@example.org>
+Subject: [PATCH nvme] nvme: reserve a slice of HMB for firmware trace ring
+
+PLACEHOLDER. Replace this file with the real patch generated via:
+
+    git format-patch -v1 -o kernel/patches/ \
+        --subject-prefix="PATCH nvme" \
+        --base=v6.6 origin/nvme-hmb-trace
+
+The intended change carves a configurable region off the HMB advertised
+by host_mem_max_pmt and exposes it to nvme-hmb-trace.ko via a new
+per-controller pointer. checkpatch --strict must pass.
+
+Signed-off-by: TODO <todo@example.org>
+---
+ drivers/nvme/host/core.c | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)

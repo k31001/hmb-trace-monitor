@@ -1,0 +1,7 @@
+# PLACEHOLDER — QEMU-side mock HMB producer.
+#
+# Replace with a real patch series against QEMU's hw/nvme/ that
+# synthesizes mock trace records into the HMB region, so the guest
+# kernel module + daemon can be exercised without real firmware.
+#
+# Until then, in-guest test producers live under mock/scripts/.

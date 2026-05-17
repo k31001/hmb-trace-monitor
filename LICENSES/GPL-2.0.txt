@@ -1,0 +1,10 @@
+License: GPL-2.0-only
+SPDX-License-Identifier: GPL-2.0-only
+
+Replace this file with the canonical "GNU General Public License,
+version 2" text from https://spdx.org/licenses/GPL-2.0-only.html
+before tagging the first release.
+
+The kernel module under kernel/ and the user-space daemon under
+daemon/ are distributed under GPL-2.0-only. Every source file in
+those trees carries an `SPDX-License-Identifier: GPL-2.0` header.

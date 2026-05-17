@@ -1,0 +1,12 @@
+License: Apache-2.0
+SPDX-License-Identifier: Apache-2.0
+
+Replace this file with the canonical "Apache License, Version 2.0"
+text from https://spdx.org/licenses/Apache-2.0.html before tagging
+the first release.
+
+The Python analyzer under analyzer/, the documentation under docs/,
+and the QEMU harness under mock/ are distributed under Apache-2.0.
+Every source file in those trees carries an
+`SPDX-License-Identifier: Apache-2.0` header (or, for documents, a
+similar prefix in the front matter).

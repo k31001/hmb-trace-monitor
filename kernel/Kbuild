@@ -1,0 +1,3 @@
+# SPDX-License-Identifier: GPL-2.0
+obj-m += module/nvme_hmb_trace.o
+ccflags-y += -I$(src)/module
