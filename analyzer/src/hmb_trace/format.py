@@ -58,9 +58,7 @@ class RingHeader:
         if self.magic != HMB_TRACE_MAGIC:
             raise ValueError(f"bad ring magic: {self.magic:#x}")
         if self.version > HMB_TRACE_ABI_VERSION:
-            raise ValueError(
-                f"ring ABI v{self.version} newer than supported v{HMB_TRACE_ABI_VERSION}"
-            )
+            raise ValueError(f"ring ABI v{self.version} newer than supported v{HMB_TRACE_ABI_VERSION}")
         if self.ring_size == 0 or (self.ring_size & (self.ring_size - 1)):
             raise ValueError(f"ring_size must be power of 2, got {self.ring_size}")
 

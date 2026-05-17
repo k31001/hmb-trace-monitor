@@ -138,9 +138,21 @@ sync
 
 ```sh
 # (호스트 셸)
-uv run --project analyzer hmb-trace-analyze decode mock/work/trace.bin
+uv run --project analyzer hmb-trace-analyze info   mock/work/trace.bin
 uv run --project analyzer hmb-trace-analyze stats  mock/work/trace.bin
+uv run --project analyzer hmb-trace-analyze gaps   mock/work/trace.bin
+uv run --project analyzer hmb-trace-analyze report mock/work/trace.bin --open
 ```
+
+펌웨어가 아직 준비 안 됐다면 합성 데이터로도 즉시 동작 확인이 가능합니다.
+
+```sh
+uv run --project analyzer hmb-trace-synth /tmp/demo.bin -n 50000 \
+    --drop-every 1000 --truncate-every 500 --wrap-every 5000
+uv run --project analyzer hmb-trace-analyze report /tmp/demo.bin --open
+```
+
+CLI 전체와 HTML 리포트 사용법은 [분석기 & 웹 뷰어](analyzer.html) 페이지에 정리되어 있습니다.
 
 ## 5. 새 트레이스 이벤트 추가하기
 

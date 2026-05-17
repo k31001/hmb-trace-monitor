@@ -20,6 +20,13 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+# 2026-06-02부터 GitHub Actions 런너의 기본 Node 런타임이 24로 바뀌고,
+# 2026-09-16에 Node 20 런너가 제거된다. 그 전까지 미리 Node 24로 옮겨
+# JavaScript 액션(actions/checkout, configure-pages, upload-pages-artifact 등)을
+# Node 24에서 실행한다. 참고: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   build:
     runs-on: ubuntu-latest

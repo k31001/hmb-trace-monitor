@@ -55,18 +55,25 @@ make                # daemon + analyzer
 make kernel         # 모듈 빌드 (insmod는 하지 않음)
 make lint           # checkpatch + -Werror + ruff + mypy
 
+# 분석기를 합성 데이터로 즉시 체험 (펌웨어/모듈 없이도 가능)
+uv run --project analyzer hmb-trace-synth /tmp/demo.bin -n 50000 --drop-every 1000
+uv run --project analyzer hmb-trace-analyze info /tmp/demo.bin
+uv run --project analyzer hmb-trace-analyze report /tmp/demo.bin --open
+
 # 전체 스택을 끝에서 끝까지 돌려 보려면 mock/ 환경에서
 make -C mock build-guest-kernel
 make -C mock qemu-run
 ```
 
-자세한 단계는 [개발 튜토리얼](tutorial.html)을 참고하세요.
+자세한 단계는 [개발 튜토리얼](tutorial.html)을 참고하세요. 분석기 단독 사용은
+[분석기 & 웹 뷰어](analyzer.html) 페이지에 정리되어 있습니다.
 
 ## 문서 구성
 
 - **[아키텍처](architecture.html)** — 컴포넌트 분리, 데이터 흐름, 실패 모드
 - **[동작 과정](operation.html)** — HMB 링의 producer/consumer 규약, wrap-around, 동기화
 - **[튜토리얼](tutorial.html)** — 개발 환경 셋업부터 trace 한 줄 디코드까지
+- **[분석기 & 웹 뷰어](analyzer.html)** — `hmb-trace-analyze` CLI와 HTML 리포트
 - **[트레이스 포맷](trace-format.html)** — 바이너리 ABI 명세
 - **[ABI](abi.html)** — 캐릭터 디바이스 / ioctl / mmap 인터페이스
 
