@@ -21,24 +21,39 @@ nav_order: 2
 
 ## 데이터 흐름
 
-```
-   SSD 펌웨어 (producer)
-       │
-       │  HMB ring에 레코드 기록(호스트 RAM, PCIe DMA로 도달)
-       ▼
-   호스트 RAM의 HMB 영역
-       ▲
-       │  read-only mmap으로 유저스페이스에 노출
-       │
-   nvme-hmb-trace.ko ──── /dev/nvme-hmb-traceN ────► hmb-trace-daemon
-                                                          │
-                                                          │ writev(raw 바이트)
-                                                          ▼
-                                                      trace.bin (파일)
-                                                          │
-                                                          │ 오프라인
-                                                          ▼
-                                                  hmb-trace-analyze (Python)
+```mermaid
+flowchart TB
+    subgraph SSD["SSD 디바이스"]
+        FW["펌웨어<br/>(producer)"]
+    end
+
+    subgraph HOST["호스트"]
+        HMB[("HMB ring buffer<br/>호스트 RAM, PCIe DMA 가능")]
+        subgraph KSPACE["커널 공간"]
+            K["nvme-hmb-trace.ko"]
+            DEV["/dev/nvme-hmb-traceN"]
+        end
+        subgraph USPACE["유저 공간"]
+            D["hmb-trace-daemon<br/>(consumer)"]
+            F[("trace.bin")]
+            A["hmb-trace-analyze"]
+            R[("report.html")]
+        end
+    end
+
+    FW -- "DMA write" --> HMB
+    HMB -. "read-only<br/>mmap" .-> K
+    K --> DEV
+    DEV -- "mmap + poll" --> D
+    D -- "writev raw" --> F
+    F -. 오프라인 .-> A
+    A --> R
+
+    style FW   fill:#1f2937,stroke:#58a6ff,color:#e6edf3
+    style HMB  fill:#1f2937,stroke:#d29922,color:#e6edf3
+    style K    fill:#1f2937,stroke:#3fb950,color:#e6edf3
+    style D    fill:#1f2937,stroke:#3fb950,color:#e6edf3
+    style A    fill:#1f2937,stroke:#f85149,color:#e6edf3
 ```
 
 ## 모듈 분리 원칙
@@ -55,9 +70,41 @@ NVMe 코어에 손을 대는 부분은 `kernel/patches/`에 별도 패치 시리
 
 Producer(펌웨어)와 consumer(데몬)는 **정확히 한 쌍**입니다. 캐릭터 디바이스의 `open`은 배타적이라 두 번째 컨슈머는 `-EBUSY`를 받습니다. 이 단일 producer / 단일 consumer 가정 위에서 lockless ring을 단순한 acquire/release로 구현할 수 있습니다.
 
+```mermaid
+sequenceDiagram
+    autonumber
+    participant FW as 펌웨어 (producer)
+    participant H as HMB ring
+    participant D as 데몬 (consumer)
+
+    Note over FW,H: Producer 사이드
+    FW->>H: payload 바이트 기록
+    FW->>FW: 메모리 배리어
+    FW->>H: head publish (release)
+
+    Note over D,H: Consumer 사이드
+    D->>H: head 로드 (acquire)
+    H-->>D: head 값
+    D->>D: payload 복사 → trace.bin
+    D->>H: tail publish (release)
+```
+
 자세한 publish/visibility 규약은 [동작 과정](operation.html) 5장을 보세요.
 
 ## 실패 모드
+
+```mermaid
+stateDiagram-v2
+    [*] --> 정상
+    정상 --> 정상 : head 진행
+    정상 --> Overflow : ring 가득
+    Overflow --> 정상 : tail 진행 (자동 해제)
+    정상 --> Frozen : 컨트롤러 리셋
+    Frozen --> [*] : 모듈 재초기화
+
+    Overflow : HMB_RING_FLAG_OVERFLOWED set\n새 record 드롭
+    Frozen   : HMB_RING_FLAG_FROZEN set\nproducer 정지
+```
 
 | 상황                            | 책임 주체   | 회복 방법                                                  |
 |---------------------------------|-------------|------------------------------------------------------------|

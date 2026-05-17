@@ -56,21 +56,9 @@ uv run --project analyzer hmb-trace-synth /tmp/demo.bin \
 
 ### info — 빠른 요약
 
-```
-╭─────────────────────────────── hmb-trace info ───────────────────────────────╮
-│ 소스          /tmp/demo.bin                                                  │
-│ 크기          4.0 MB                                                         │
-│ ABI           v1 · ring_hdr=64B · rec_hdr=32B                                │
-│ 총 record     49,951                                                         │
-│ 기간          10.816 s                                                       │
-│ Records/sec   4,618                                                          │
-│ payload 평균  51.0 B                                                         │
-│ Opcodes       9 개                                                           │
-│ CPUs          4 개                                                           │
-╰──────────────────────────────────────────────────────────────────────────────╯
-```
-
-`TRUNCATED` 카운트나 시퀀스 갭이 있으면 별도 패널이 노란/빨강으로 따라 붙습니다.
+`hmb-trace-analyze info` 는 rich 기반 패널로 한눈에 보는 요약을 그려 줍니다.
+총 record 수, 시간 범위, records-per-second, payload 평균, 그리고 truncated/
+시퀀스 갭이 있다면 색상이 다른 별도 경고 패널이 따라 붙습니다.
 
 ### stats — 상세 분포
 
@@ -111,6 +99,19 @@ CSV는 표 도구(엑셀, DuckDB 등)에, JSONL은 jq/pandas 파이프라인에 
 uv run --project analyzer hmb-trace-analyze report /tmp/demo.bin --open
 ```
 
+### 라이브 예제
+
+설치 없이 바로 결과물을 살펴볼 수 있도록, 150,000개 record · 의도된 시퀀스
+드롭/truncated/wrap marker 가 섞인 합성 트레이스로 만든 **라이브 예제 리포트**를
+같이 호스팅하고 있습니다.
+
+[예제 리포트 열기 ▶](examples/sample-report.html){: .btn .btn-primary .fs-5 .mr-2 }
+
+이 페이지는 GitHub Actions 워크플로우가 매 커밋마다 새로 생성하므로 코드/포맷
+변경에 자동으로 따라옵니다.
+
+### 특징
+
 - 단일 `.html` 파일이 만들어집니다 (`<dump>.report.html`).
 - **외부 CDN/패키지 의존성이 없습니다.** 오프라인에서, 이메일로 보내서, USB로
   넘겨서 어디서나 동일하게 열립니다.
@@ -119,24 +120,23 @@ uv run --project analyzer hmb-trace-analyze report /tmp/demo.bin --open
 - 통계는 전체 record에 대해, record 표는 `--max-table-rows`(기본 5000) 만큼만
   임베드해 파일 크기와 브라우저 부하를 관리합니다. 그 이상은 CLI(`filter`/`convert`)로.
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│  HMB Trace Report                                            │
-│  소스: /tmp/demo.bin · 크기: 4.0 MB · 생성: 2026-05-17 ...   │
-│                                                              │
-│  [총 record: 49,951] [기간: 10.8s] [rec/s: 4,618] ...       │
-│                                                              │
-│  Opcode 분포                                                 │
-│  0x0001 NAND_READ      ████████████████  40%   19,943       │
-│  0x0002 NAND_PROGRAM   █████████         25%   12,418       │
-│  ...                                                         │
-│                                                              │
-│  시퀀스 갭 (총 49건 · 드롭 추정 97건)                        │
-│  prev_seq | next_seq | dropped | prev_ts   | next_ts        │
-│                                                              │
-│  레코드 [opcode__][cpu__][flags__][hex 검색__]              │
-│  ... 페이지네이션 표 ...                                     │
-└──────────────────────────────────────────────────────────────┘
+### 구성 요소
+
+```mermaid
+flowchart LR
+    subgraph PIPE["분석 파이프라인"]
+        DUMP[("trace.bin<br/>raw dump")] --> STREAM["stream.py<br/>iter_records"]
+        STREAM --> STATS["stats.py<br/>compute()"]
+        STREAM --> TABLE["report.py<br/>tail records"]
+        STATS --> JSON[("JSON")]
+        TABLE --> JSON
+        JSON --> HTML[("report.html<br/>self-contained")]
+    end
+
+    style DUMP fill:#0d1117,stroke:#30363d,color:#8b949e
+    style HTML fill:#1f2937,stroke:#58a6ff,color:#e6edf3
+    style STATS fill:#1f2937,stroke:#3fb950,color:#e6edf3
+    style TABLE fill:#1f2937,stroke:#3fb950,color:#e6edf3
 ```
 
 ## opcode 카탈로그 (선택)

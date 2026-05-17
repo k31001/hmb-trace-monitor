@@ -25,6 +25,11 @@ aux_links:
 # Footer
 footer_content: "GPL-2.0 (kernel/, daemon/) · Apache-2.0 (analyzer/, docs/, mock/)"
 
+# Mermaid 다이어그램 활성화 (just-the-docs 내장 지원).
+# ```mermaid 코드 블록이 자동으로 SVG로 렌더링된다.
+mermaid:
+  version: "10.9.1"
+
 # 사이트에 포함하지 않을 파일
 exclude:
   - CLAUDE.md            # AI 에이전트용 메타 문서

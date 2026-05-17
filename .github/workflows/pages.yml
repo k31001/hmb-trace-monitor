@@ -34,6 +34,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 분석기로 합성 트레이스를 만들고 HTML 리포트를 docs/examples/ 아래에
+      # 떨어뜨려, Jekyll이 그대로 사이트에 포함시키도록 한다. 매 푸시마다
+      # 새로 생성하므로 코드/포맷 변경이 즉시 반영된다.
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: "analyzer/uv.lock"
+
+      - name: Setup Python
+        run: uv python install 3.12
+
+      - name: Generate sample trace report
+        working-directory: analyzer
+        run: |
+          set -e
+          uv sync
+          SAMPLE=/tmp/firmware-trace-sample.bin
+          uv run hmb-trace-synth "$SAMPLE" \
+              -n 150000 --seed 42 \
+              --drop-every 2500 --truncate-every 1200 --wrap-every 8000
+          mkdir -p ../docs/examples
+          uv run hmb-trace-analyze report "$SAMPLE" \
+              -o ../docs/examples/sample-report.html
+          ls -lh ../docs/examples/
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:

@@ -10,16 +10,18 @@
 
 ## 파일 구성
 
-| 파일                | 역할                                                       |
+| 파일/디렉토리        | 역할                                                       |
 |---------------------|------------------------------------------------------------|
-| `_config.yml`       | Jekyll 설정(테마: `just-the-docs`, 한국어, 제외 목록)      |
+| `_config.yml`       | Jekyll 설정(테마: `just-the-docs`, 한국어, mermaid 활성화) |
 | `Gemfile`           | 로컬 미리보기용 의존성                                     |
 | `index.md`          | 사이트 랜딩(개요)                                          |
 | `architecture.md`   | 아키텍처 / 데이터 흐름 / 실패 모드                         |
 | `operation.md`      | producer/consumer 동작 과정(단계별)                        |
 | `tutorial.md`       | 개발 셋업부터 mock 환경 end-to-end까지                     |
+| `analyzer.md`       | 분석기 CLI / HTML 웹 뷰어 사용법                           |
 | `trace-format.md`   | HMB ring + record 바이너리 ABI                             |
 | `abi.md`            | 캐릭터 디바이스/ioctl/mmap/poll/sysfs 표면                 |
+| `examples/`         | CI가 매 푸시마다 생성하는 라이브 예제 리포트 산출물        |
 | `test-vectors/`     | 헥스 dump fixture + 골든 디코드(예정)                      |
 | `CLAUDE.md`         | (이 파일) — 사이트 빌드에서는 제외됨                       |
 
@@ -32,6 +34,26 @@
   순서를 지킵니다.
 - 정수 상수는 10진수와 16진수를 함께 표기.
 - 명세 문서를 손대면 맨 아래 "버전 이력" 표에 한 줄을 **append**합니다.
+
+## 다이어그램 작성 (Mermaid)
+
+- ASCII 아트 대신 ```` ```mermaid ```` 코드 블록을 사용합니다. just-the-docs가
+  `_config.yml`의 `mermaid.version`을 보고 클라이언트 사이드에서 SVG로 렌더링합니다.
+- 흐름은 `flowchart TB`/`LR`, 상호작용은 `sequenceDiagram`, 상태 머신은
+  `stateDiagram-v2` 를 우선 사용합니다.
+- 노드 강조에 일관된 색을 씁니다 — `#58a6ff`(파랑·핵심), `#3fb950`(초록·정상 흐름),
+  `#f85149`(빨강·실패/abort), `#d29922`(노랑·경고/HMB), 배경은 `#1f2937`/`#0d1117`.
+- 메모리 레이아웃은 mermaid의 표현력이 부족하므로 인라인 `<style>` + HTML
+  `<table class="memmap">` 를 사용합니다(예: `operation.md` §1).
+
+## 예제 리포트 (`examples/sample-report.html`)
+
+- 사이트가 호스팅하는 라이브 예제 리포트는 **워크플로우가 매 푸시마다 다시
+  생성**합니다 (`.github/workflows/pages.yml` 의 "Generate sample trace report"
+  단계). 코드/포맷이 바뀌면 즉시 따라옵니다.
+- 로컬에서 동일한 산출물을 만들고 싶다면 레포 루트에서 `make docs-example`.
+- 이 파일은 `.gitignore`에 있어 커밋되지 않습니다 — 항상 CI가 만든 최신 버전이
+  GitHub Pages에 올라갑니다.
 
 ## Jekyll 페이지 프론트 매터
 

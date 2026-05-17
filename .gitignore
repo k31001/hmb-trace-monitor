@@ -66,3 +66,6 @@ docs/.bundle/
 docs/vendor/
 docs/Gemfile.lock
 _site/
+
+# CI/로컬에서 분석기가 생성하는 예제 리포트 (배포 시에만 빌드)
+docs/examples/sample-report.html
