@@ -41,7 +41,8 @@ jobs:
         uses: astral-sh/setup-uv@v3
         with:
           enable-cache: true
-          cache-dependency-glob: "analyzer/uv.lock"
+          # uv.lock은 gitignore에 있으므로 pyproject.toml을 캐시 키로 사용.
+          cache-dependency-glob: "analyzer/pyproject.toml"
 
       - name: Setup Python
         run: uv python install 3.12
